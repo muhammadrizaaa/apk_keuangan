@@ -27,6 +27,7 @@ public class ProfileForm extends javax.swing.JFrame {
     
     private void populateProfile(){
         try {
+            profiles.addItem("Select Profile");
             for(Profile profile : dbu.getProfile()){
                 profiles.addItem(profile.getId()+". "+profile.getName());
             }
@@ -50,6 +51,7 @@ public class ProfileForm extends javax.swing.JFrame {
         profiles = new javax.swing.JComboBox<>();
         testRun1 = new javax.swing.JLabel();
         createProfile = new javax.swing.JButton();
+        deletButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -62,7 +64,7 @@ public class ProfileForm extends javax.swing.JFrame {
 
         jLabel1.setText("Profile");
 
-        profiles.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select Profile" }));
+        profiles.setModel(new javax.swing.DefaultComboBoxModel<>());
         profiles.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 profilesActionPerformed(evt);
@@ -73,6 +75,13 @@ public class ProfileForm extends javax.swing.JFrame {
         createProfile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 createProfileActionPerformed(evt);
+            }
+        });
+
+        deletButton.setText("Delete");
+        deletButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deletButtonActionPerformed(evt);
             }
         });
 
@@ -90,13 +99,17 @@ public class ProfileForm extends javax.swing.JFrame {
                                 .addComponent(jLabel1))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(164, 164, 164)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(createProfile)
-                                    .addComponent(submit)))))
+                                .addComponent(createProfile))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(testRun1)))
                 .addContainerGap(164, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(deletButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(submit)
+                .addGap(126, 126, 126))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -108,7 +121,9 @@ public class ProfileForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(profiles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(submit)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(submit)
+                    .addComponent(deletButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(createProfile)
                 .addContainerGap(95, Short.MAX_VALUE))
@@ -127,7 +142,7 @@ public class ProfileForm extends javax.swing.JFrame {
                 int profileId = Integer.parseInt(getTheId[0]);
                 
             try {
-                if (dbu.selectProfile(profileId)) {
+                if (dbu.getProfile(profileId)) {
                     System.out.println("Profile found!");
                     Home home = new Home(dbu);
                     home.setVisible(true);
@@ -161,6 +176,29 @@ public class ProfileForm extends javax.swing.JFrame {
             Logger.getLogger(ProfileForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_createProfileActionPerformed
+
+    private void deletButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deletButtonActionPerformed
+        String selectedItem = (String) profiles.getSelectedItem();
+        
+            if(selectedItem != null){
+            
+                String [] getTheId = selectedItem.split("\\.");
+                
+                int profileId = Integer.parseInt(getTheId[0]);
+            try {
+                if(dbu.deleteProfile(profileId)){
+                    JOptionPane.showMessageDialog(this, "PROFILE "+getTheId[1]+" DELETED... CONGRATS I GUESS");
+                }
+                else{
+                    JOptionPane.showMessageDialog(this, getTheId[1]+" HAS INCOME/OUTCOME CANT DELETE IT");
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ProfileForm.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            }
+            profiles.removeAllItems();
+            populateProfile();
+    }//GEN-LAST:event_deletButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -199,6 +237,7 @@ public class ProfileForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createProfile;
+    private javax.swing.JButton deletButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JComboBox<String> profiles;
     private javax.swing.JButton submit;

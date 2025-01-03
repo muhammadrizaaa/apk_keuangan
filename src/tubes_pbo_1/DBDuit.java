@@ -32,8 +32,15 @@ public class DBDuit {
         ResultSet rs = ps.executeQuery();
         //now we put tha shi on the Array List dawg
         while(rs.next()){
-            Income i = new Income(rs.getInt("id"), rs.getString("name"), rs.getDouble("qty"), rs.getString("created_at"),
-                    u.getLoginProfile().getId(), rs.getString("profile_name"));
+            String profileName = rs.getString("profile_name");
+            Income i = new Income(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getDouble("qty"),
+                rs.getString("created_at"),
+                u.getLoginProfile().getId(),
+                profileName != null ? profileName : "Deleted Profile"
+            );
             d.add(i);
             System.out.println(i);
         }

@@ -17,7 +17,6 @@ public class DbUsers {
     private final Koneksi k = new Koneksi();
     private Users s;
     private Profile p;
-    private double amount;
     public boolean register(Users s) throws SQLException{
         conn = k.getConnection();
         String query = "INSERT INTO users(name, username, email, password) VALUES(?,?,?,?)";
@@ -58,7 +57,7 @@ public class DbUsers {
             return false;
         }
     }
-    public boolean selectProfile(int id) throws SQLException{
+    public boolean getProfile(int id) throws SQLException{
         conn = k.getConnection();
         String q = "SELECT * FROM profile WHERE id_user = ? AND id = ? ";
         PreparedStatement ps = conn.prepareStatement(q);
@@ -183,5 +182,13 @@ public class DbUsers {
         rs.close();
         ps.close();
         return p;
+    }
+    public boolean deleteProfile(int idProfile) throws SQLException{
+        conn = k.getConnection();
+        String q = "DELETE FROM profile WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(q);
+        ps.setInt(1, idProfile);
+        int checkRow = ps.executeUpdate();
+        return checkRow==1;
     }
 }

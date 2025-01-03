@@ -97,6 +97,7 @@ public class Home extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         amountOutcomeField = new javax.swing.JTextField();
         submitOutcome = new javax.swing.JButton();
+        logoutButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -155,6 +156,13 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
+        logoutButton1.setText("LogOut As Profile");
+        logoutButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -166,7 +174,9 @@ public class Home extends javax.swing.JFrame {
                         .addComponent(welcome1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(logoutButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(16, 16, 16)
+                        .addComponent(logoutButton1)
+                        .addGap(18, 18, 18)
                         .addComponent(profilesButton))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,7 +205,8 @@ public class Home extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(profilesButton)
                     .addComponent(welcome1)
-                    .addComponent(logoutButton))
+                    .addComponent(logoutButton)
+                    .addComponent(logoutButton1))
                 .addGap(7, 7, 7)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -277,12 +288,18 @@ public class Home extends javax.swing.JFrame {
                 amountOutcomeField.setText("");
             }
             else{
-                JOptionPane.showMessageDialog(this, "NIGGA YOU BROKE, MAKE A MONEY NIGGA!!!");
+                JOptionPane.showMessageDialog(this, "YOU BROKE, MAKE SOME MONEY!!!");
             }
         } catch (SQLException ex) {
             Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_submitOutcomeActionPerformed
+
+    private void logoutButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButton1ActionPerformed
+        ProfileForm pf = new ProfileForm(dbu);
+        pf.setVisible(true);
+        this.setVisible(false);
+    }//GEN-LAST:event_logoutButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -332,6 +349,7 @@ public class Home extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton logoutButton;
+    private javax.swing.JButton logoutButton1;
     private javax.swing.JTextField nameIncomeField;
     private javax.swing.JTextField nameOutcomeField;
     private javax.swing.JTable outcomeTable;

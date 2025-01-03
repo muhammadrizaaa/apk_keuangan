@@ -51,16 +51,6 @@ public class Users {
     public double getAmount(){
         return saldo;
     }
-    public boolean setSaldo(double amount){
-        double set = this.saldo+amount;
-        if(set<0){
-            return false;
-        }
-        else{
-            this.saldo = set;
-            return true;
-        }
-    }
     public ArrayList<Profile> getProfile(){
         return profile;
     }
