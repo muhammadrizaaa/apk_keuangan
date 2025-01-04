@@ -186,11 +186,15 @@ public class ProfileForm extends javax.swing.JFrame {
                 
                 int profileId = Integer.parseInt(getTheId[0]);
             try {
-                if(dbu.deleteProfile(profileId)){
-                    JOptionPane.showMessageDialog(this, "PROFILE "+getTheId[1]+" DELETED... CONGRATS I GUESS");
-                }
-                else{
-                    JOptionPane.showMessageDialog(this, getTheId[1]+" HAS INCOME/OUTCOME CANT DELETE IT");
+                
+                int check = JOptionPane.showConfirmDialog(rootPane, "Are u sure, this action will delete all the income/outcome that "+getTheId[1]+ " Has Made!", "Delete "+getTheId[1], JOptionPane.YES_NO_CANCEL_OPTION);
+                if(check == JOptionPane.YES_OPTION){
+                    if(dbu.forceDeleteProfile(profileId)){
+                        JOptionPane.showMessageDialog(rootPane, getTheId[1]+" Has Been Deleted, all the outcome or income from "+getTheId[1]+" have been deleted too");
+                    }
+                    else{
+                        JOptionPane.showMessageDialog(rootPane, getTheId[1]+" Has Significant Income, If u Delete this profile your account will be broke or the money is minus. Delete Operation is aborted.");
+                    }
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ProfileForm.class.getName()).log(Level.SEVERE, null, ex);

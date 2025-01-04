@@ -72,6 +72,23 @@ public class DbUsers {
             return false;
         }
     }
+    
+    public ArrayList<Profile> getProfile() throws SQLException{
+        conn = k.getConnection();
+        ArrayList <Profile> p = new ArrayList<>();
+        String q = "SELECT * FROM profile WHERE id_user = ?";
+        PreparedStatement ps = conn.prepareStatement(q);
+        ps.setInt(1, this.getUser().getId());
+        ResultSet rs = ps.executeQuery();
+        //now we put tha shi on the Array List dawg
+        while(rs.next()){
+            Profile p1 = new Profile(rs.getInt("id"), rs.getString("name"), rs.getInt("id_user"));
+            p.add(p1);
+        }
+        rs.close();
+        ps.close();
+        return p;
+    }
     public boolean createProfile(String name) throws SQLException{
         conn = k.getConnection();
         String q = "INSERT INTO profile (name, id_user) VALUES(?, ?) ";
@@ -167,28 +184,41 @@ public class DbUsers {
             return false;
         }
     }
-    public ArrayList<Profile> getProfile() throws SQLException{
+    public boolean forceDeleteProfile(int idProfile) throws SQLException{
         conn = k.getConnection();
-        ArrayList <Profile> p = new ArrayList<>();
-        String q = "SELECT * FROM profile WHERE id_user = ?";
-        PreparedStatement ps = conn.prepareStatement(q);
-        ps.setInt(1, this.getUser().getId());
-        ResultSet rs = ps.executeQuery();
-        //now we put tha shi on the Array List dawg
-        while(rs.next()){
-            Profile p1 = new Profile(rs.getInt("id"), rs.getString("name"), rs.getInt("id_user"));
-            p.add(p1);
+        DBDuit dbd = new DBDuit(this);
+        double income = 0;
+        double outcome = 0;
+        ArrayList <Duit> incomeArr = dbd.getIncome(idProfile);
+        ArrayList <Duit> outcomeArr = dbd.getOutcome(idProfile);
+        for(Duit d:incomeArr){
+            income += d.amount;
         }
-        rs.close();
-        ps.close();
-        return p;
-    }
-    public boolean deleteProfile(int idProfile) throws SQLException{
-        conn = k.getConnection();
+        for(Duit d:outcomeArr){
+            outcome += d.amount;
+        }
+        if(!dbd.updateSaldo(income*-1)){
+            return false;
+        }
+        if(!dbd.updateSaldo(outcome)){
+            return false;
+        }
+        dbd.updateSaldo(income*-1);
+        String qDeleteIncome = "DELETE FROM income WHERE id_profile = ?";
+        PreparedStatement psdi = conn.prepareStatement(qDeleteIncome);
+        psdi.setInt(1, idProfile);
+        psdi.executeUpdate();
+        psdi.close();
+        String qDeleteOutcome = "DELETE FROM outcome WHERE id_profile = ?";
+        PreparedStatement psdo = conn.prepareStatement(qDeleteOutcome);
+        psdo.setInt(1, idProfile);
+        psdo.executeUpdate();
+        psdo.close();
         String q = "DELETE FROM profile WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(q);
         ps.setInt(1, idProfile);
         int checkRow = ps.executeUpdate();
-        return checkRow==1;
+        ps.close();
+        return checkRow == 1;
     }
 }

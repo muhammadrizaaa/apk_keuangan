@@ -49,6 +49,36 @@ public class DBDuit {
         conn.close();
         return d;
     }
+    public ArrayList <Duit> getIncome(int idProfile) throws SQLException{
+        conn = k.getConnection();
+        ArrayList <Duit> d = new ArrayList<>();
+        String q = "SELECT i.id, i.name, i.qty, p.name AS profile_name, i.created_at\n" +
+        "FROM income i\n" +
+        "JOIN profile p ON i.id_profile = ?\n" +
+        "WHERE p.id = ?;";
+        PreparedStatement ps = conn.prepareStatement(q);
+        ps.setInt(1, idProfile);
+        ps.setInt(2, idProfile);
+        ResultSet rs = ps.executeQuery();
+        //now we put tha shi on the Array List dawg
+        while(rs.next()){
+            String profileName = rs.getString("profile_name");
+            Income i = new Income(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getDouble("qty"),
+                rs.getString("created_at"),
+                idProfile,
+                profileName != null ? profileName : "Deleted Profile"
+            );
+            d.add(i);
+            System.out.println(i);
+        }
+        rs.close();
+        ps.close();
+        conn.close();
+        return d;
+    }
     public ArrayList <Duit> getOutcome() throws SQLException{
         conn = k.getConnection();
         ArrayList <Duit> d = new ArrayList<>();
@@ -65,6 +95,36 @@ public class DBDuit {
             Outcome o = new Outcome(rs.getInt("id"), rs.getString("name"), rs.getDouble("qty"), rs.getString("created_at"),
                     u.getLoginProfile().getId(), rs.getString("profile_name"));
             d.add(o);
+        }
+        rs.close();
+        ps.close();
+        conn.close();
+        return d;
+    }
+     public ArrayList <Duit> getOutcome(int idProfile) throws SQLException{
+        conn = k.getConnection();
+        ArrayList <Duit> d = new ArrayList<>();
+        String q = "SELECT i.id, i.name, i.qty, p.name AS profile_name, i.created_at\n" +
+        "FROM outcome i\n" +
+        "JOIN profile p ON i.id_profile = ?\n" +
+        "WHERE p.id = ?;";
+        PreparedStatement ps = conn.prepareStatement(q);
+        ps.setInt(1, idProfile);
+        ps.setInt(2, idProfile);
+        ResultSet rs = ps.executeQuery();
+        //now we put tha shi on the Array List dawg
+        while(rs.next()){
+            String profileName = rs.getString("profile_name");
+            Income i = new Income(
+                rs.getInt("id"),
+                rs.getString("name"),
+                rs.getDouble("qty"),
+                rs.getString("created_at"),
+                idProfile,
+                profileName != null ? profileName : "Deleted Profile"
+            );
+            d.add(i);
+            System.out.println(i);
         }
         rs.close();
         ps.close();

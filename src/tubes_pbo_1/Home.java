@@ -44,9 +44,34 @@ public class Home extends javax.swing.JFrame {
         outcomeModel.addColumn("TGL");
         outcomeTable.setModel(outcomeModel);
         populateOutcomeTable(dbd);
+        populateComboIncome();
+        populateComboOutcome();
 
         
         welcome1.setText("Welcome "+ dbu.getLoginProfile().getName()+" Your Amount Money Currently Is "+dbu.getUser().getAmount()+" USD. ");
+    }
+    
+    private void populateComboIncome(){
+        try {
+            comboFilterIncome.addItem("All");
+            for(Profile profile : dbu.getProfile()){
+                comboFilterIncome.addItem(profile.getId()+". "+profile.getName());
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProfileForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private void populateComboOutcome(){
+        try {
+            comboFilterOutcome.addItem("All");
+            for(Profile profile : dbu.getProfile()){
+                comboFilterOutcome.addItem(profile.getId()+". "+profile.getName());
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ProfileForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     public void populateIncomeTable(DBDuit dbd) throws SQLException{
         incomeModel.setRowCount(0);
@@ -58,6 +83,15 @@ public class Home extends javax.swing.JFrame {
         }
          welcome1.setText("Welcome "+ dbu.getLoginProfile().getName()+" Your Saldo Currently Is "+dbu.getUser().getAmount());
     }
+    public void populateIncomeTable(int idProfile) throws SQLException{
+        incomeModel.setRowCount(0);
+        int counter = 1;
+        ArrayList<Duit> income = dbd.getIncome(idProfile);
+        for (Duit d : income){
+            Object [] addData = {counter++, d.getName(), d.getAmount()+" USD", d.getProfileName(), d.getDate()};
+            incomeModel.addRow(addData);
+        }
+    }
     public void populateOutcomeTable(DBDuit dbd) throws SQLException{
         outcomeModel.setRowCount(0);
         int counter = 1;
@@ -67,6 +101,15 @@ public class Home extends javax.swing.JFrame {
             outcomeModel.addRow(addData);
         }
         welcome1.setText("Welcome "+ dbu.getLoginProfile().getName()+" Your Saldo Currently Is "+dbu.getUser().getAmount());
+    }
+    public void populateOutcomeTable(int idProfile) throws SQLException{
+        outcomeModel.setRowCount(0);
+        int counter = 1;
+        ArrayList<Duit> outcome = dbd.getOutcome(idProfile);
+        for (Duit d : outcome){
+            Object [] addData = {counter++, d.getName(), d.getAmount()+" USD", d.getProfileName(), d.getDate()};
+            outcomeModel.addRow(addData);
+        }
     }
 
     /**
@@ -98,6 +141,10 @@ public class Home extends javax.swing.JFrame {
         amountOutcomeField = new javax.swing.JTextField();
         submitOutcome = new javax.swing.JButton();
         logoutButton1 = new javax.swing.JButton();
+        comboFilterIncome = new javax.swing.JComboBox<>();
+        comboFilterOutcome = new javax.swing.JComboBox<>();
+        filterIncome = new javax.swing.JButton();
+        filterOutcome = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -163,6 +210,20 @@ public class Home extends javax.swing.JFrame {
             }
         });
 
+        filterIncome.setText("Search");
+        filterIncome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterIncomeActionPerformed(evt);
+            }
+        });
+
+        filterOutcome.setText("Search");
+        filterOutcome.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterOutcomeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -177,7 +238,8 @@ public class Home extends javax.swing.JFrame {
                         .addGap(16, 16, 16)
                         .addComponent(logoutButton1)
                         .addGap(18, 18, 18)
-                        .addComponent(profilesButton))
+                        .addComponent(profilesButton)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(nameIncomeField, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -190,13 +252,25 @@ public class Home extends javax.swing.JFrame {
                             .addComponent(jLabel6)
                             .addComponent(amountOutcomeField, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(submitOutcome))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 593, Short.MAX_VALUE)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING))))
-                .addContainerGap())
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(comboFilterIncome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(filterIncome))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(comboFilterOutcome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(12, 12, 12)
+                                        .addComponent(filterOutcome)))
+                                .addContainerGap())))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,8 +281,11 @@ public class Home extends javax.swing.JFrame {
                     .addComponent(welcome1)
                     .addComponent(logoutButton)
                     .addComponent(logoutButton1))
-                .addGap(7, 7, 7)
-                .addComponent(jLabel1)
+                .addGap(4, 4, 4)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(comboFilterIncome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(filterIncome))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -222,9 +299,12 @@ public class Home extends javax.swing.JFrame {
                         .addComponent(amountIncomeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(submitIncome)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(comboFilterOutcome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(filterOutcome))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
@@ -301,6 +381,58 @@ public class Home extends javax.swing.JFrame {
         this.setVisible(false);
     }//GEN-LAST:event_logoutButton1ActionPerformed
 
+    private void filterIncomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterIncomeActionPerformed
+        if(comboFilterIncome.getSelectedItem().equals("All")){
+            try {
+                populateIncomeTable(dbd);
+            } catch (SQLException ex) {
+                Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else{
+            String selectedItem = (String) comboFilterIncome.getSelectedItem();
+
+                if(selectedItem != null){
+
+                    String [] getTheId = selectedItem.split("\\.");
+
+                    int profileId = Integer.parseInt(getTheId[0]);
+                try {
+                    dbd.getIncome(profileId);
+                    populateIncomeTable(profileId);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_filterIncomeActionPerformed
+
+    private void filterOutcomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterOutcomeActionPerformed
+        if(comboFilterOutcome.getSelectedItem().equals("All")){
+            try {
+                populateOutcomeTable(dbd);
+            } catch (SQLException ex) {
+                Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        else{
+            String selectedItem = (String) comboFilterOutcome.getSelectedItem();
+        
+            if(selectedItem != null){
+
+                String [] getTheId = selectedItem.split("\\.");
+
+                int profileId = Integer.parseInt(getTheId[0]);
+                try {
+                    dbd.getOutcome(profileId);
+                    populateOutcomeTable(profileId);
+                } catch (SQLException ex) {
+                    Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_filterOutcomeActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -339,6 +471,10 @@ public class Home extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField amountIncomeField;
     private javax.swing.JTextField amountOutcomeField;
+    private javax.swing.JComboBox<String> comboFilterIncome;
+    private javax.swing.JComboBox<String> comboFilterOutcome;
+    private javax.swing.JButton filterIncome;
+    private javax.swing.JButton filterOutcome;
     private javax.swing.JTable incomeTable;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
